@@ -136,6 +136,85 @@
   overflow: visible;
 }
 
+.bbits-donor {
+  position: absolute;
+  top: -22px;
+  right: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 14px rgba(220, 20, 60, 0.45);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+}
+
+.bbits-donor.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bbits-donor.donor-t0 {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(220, 20, 60, 0.35);
+}
+
+.bbits-donor.donor-t1 {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.85), 0 0 14px rgba(220, 20, 60, 0.4);
+  animation: donor-scanline 1s ease;
+}
+
+.bbits-donor.donor-t2 {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 18px rgba(220, 20, 60, 0.45);
+  animation: donor-flash 1s ease;
+}
+
+.bbits-donor.donor-t3 {
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(220, 20, 60, 0.5);
+  animation: donor-shake 0.8s ease;
+}
+
+.bbits-donor.donor-t4 {
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.9), 0 0 24px rgba(220, 20, 60, 0.55);
+  animation: donor-flash 1.1s ease;
+}
+
+.bbits-donor.donor-t5 {
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.95), 0 0 28px rgba(220, 20, 60, 0.6);
+  animation: donor-shake 1s ease;
+}
+
+.bbits-donor.donor-t6 {
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.95), 0 0 32px rgba(220, 20, 60, 0.7);
+  animation: donor-flash 1.1s ease;
+}
+
+.bbits-donor.donor-t7 {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.95), 0 0 36px rgba(220, 20, 60, 0.75);
+  animation: donor-flash 1.2s ease;
+}
+
+.bbits-donor.donor-max {
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.95), 0 0 40px rgba(220, 20, 60, 0.8);
+  animation: donor-glitch 1.2s ease;
+}
+
+.bbits-donor.donor-max::after,
+.bbits-donor.donor-t7::after,
+.bbits-donor.donor-t6::after {
+  content: '';
+  position: absolute;
+  inset: -6px -10px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.25), transparent 60%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: donor-flash 1s ease;
+  pointer-events: none;
+}
+
 .bbits-bar-numbers {
   position: absolute;
   inset: 0;
@@ -468,6 +547,64 @@
   }
 }
 
+@keyframes donor-scanline {
+  0% {
+    filter: drop-shadow(0 0 12px rgba(220, 20, 60, 0.5));
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgba(220, 20, 60, 0.15));
+  }
+}
+
+@keyframes donor-flash {
+  0% {
+    opacity: 0.95;
+  }
+  40% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes donor-shake {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes donor-glitch {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(-2px, 1px);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translate(2px, -1px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
 @keyframes bbits-sheen {
   0% {
     opacity: 0;
@@ -543,6 +680,7 @@
   const currentEl = root.querySelector('.bbits-current');
   const goalEl = root.querySelector('.bbits-goal');
   const labelEl = root.querySelector('.bbits-label');
+  const donorEl = root.querySelector('.bbits-donor');
   const particleCanvas = /** @type {HTMLCanvasElement} */ (root.querySelector('#bbits-particles'));
 
   const defaultSettings = {
@@ -590,6 +728,7 @@
     hideTimer: null,
     cycleTimer: null,
     cycleHideTimer: null,
+    donorTimer: null,
     lastPercent: 0,
     ready: false,
   };
@@ -601,6 +740,17 @@
 
   function log(...args) {
     if (state.settings.debugMode) console.log('[bbits]', ...args);
+  }
+
+  function extractDonor(evt) {
+    return (
+      evt.displayName ||
+      evt.name ||
+      evt.nick ||
+      evt.data?.displayName ||
+      evt.data?.name ||
+      'donador'
+    );
   }
 
   function applySettings() {
@@ -808,6 +958,42 @@
     triggerParticles(tier, forceHighParticles);
   }
 
+  function showDonor(bits, donor) {
+    if (!donorEl) return;
+    const tier = tierForBits(bits);
+    const tierClass = `donor-${tier}`;
+    const allTiers = [
+      'donor-t0',
+      'donor-t1',
+      'donor-t2',
+      'donor-t3',
+      'donor-t4',
+      'donor-t5',
+      'donor-t6',
+      'donor-t7',
+      'donor-max',
+    ];
+    donorEl.textContent = `cheer ${bits} · ${donor}`;
+    donorEl.classList.remove('visible', ...allTiers);
+    void donorEl.offsetWidth;
+    donorEl.classList.add('visible', tierClass);
+    if (state.donorTimer) clearTimeout(state.donorTimer);
+    const durations = {
+      t0: 2500,
+      t1: 3000,
+      t2: 3500,
+      t3: 4000,
+      t4: 4500,
+      t5: 5000,
+      t6: 5500,
+      t7: 6000,
+      max: 6500,
+    };
+    state.donorTimer = setTimeout(() => {
+      donorEl.classList.remove('visible', ...allTiers);
+    }, durations[tier] || 3000);
+  }
+
   function triggerParticles(tier, forceHigh = false) {
     if (state.settings.particleMode === 'off' && !forceHigh) return;
     if (!forceHigh && tier !== 't6' && tier !== 't7' && tier !== 'max') return;
@@ -878,6 +1064,7 @@
     } else {
       applyTierEffect(tier);
     }
+    showDonor(bits, extractDonor(evt));
   }
 
   function isAuthorized(event) {
