@@ -53,17 +53,20 @@
   opacity: 0;
   transform: translateY(12px) scale(var(--bbits-scale));
   filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0));
+  transition-duration: var(--bbits-exit-ms);
 }
 
 .bbits {
-  transition: opacity var(--bbits-exit-ms) ease, transform var(--bbits-exit-ms) ease,
-    filter var(--bbits-exit-ms) ease;
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--bbits-exit-ms);
+  transition-timing-function: ease;
 }
 
 .bbits.visible {
   opacity: 1;
   transform: translateY(0) scale(var(--bbits-scale));
   filter: drop-shadow(0 10px 32px rgba(220, 20, 60, 0.35));
+  transition-duration: var(--bbits-entrance-ms);
 }
 
 .bbits-bar-wrap {
@@ -285,6 +288,17 @@
   box-shadow: inset 0 0 26px rgba(255, 255, 255, 0.26), 0 0 26px rgba(220, 20, 60, 0.4);
 }
 
+.bbits.visible.effect-sheen .bbits-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.6) 45%, transparent 60%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: bbits-sheen 0.9s ease;
+}
+
 @keyframes bbits-pulse {
   0% {
     transform: translateY(0) scale(var(--bbits-scale));
@@ -399,6 +413,20 @@
   100% {
     opacity: 0;
     transform: scale(1.08);
+  }
+}
+
+@keyframes bbits-sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-40%) skewX(-10deg);
+  }
+  25% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(50%) skewX(-10deg);
   }
 }
 
@@ -600,10 +628,15 @@
     const step = (now) => {
       const elapsed = now - startTime;
       const t = clamp(elapsed / duration, 0, 1);
-      state.current = start + delta * ease(t);
+      const nextValue = Math.round(start + delta * ease(t));
+      state.current = nextValue;
       updateNumbers();
       if (t < 1) state.animFrame = requestAnimationFrame(step);
-      else persist();
+      else {
+        state.current = Math.round(target);
+        updateNumbers();
+        persist();
+      }
     };
 
     state.animFrame = requestAnimationFrame(step);
@@ -688,14 +721,14 @@
   function applyTierEffect(tier) {
     const map = {
       t0: 'effect-pulse effect-glow-soft',
-      t1: 'effect-pulse effect-scanline',
-      t2: 'effect-pulse effect-scratch',
-      t3: 'effect-pulse effect-shake effect-scratch effect-scanline',
-      t4: 'effect-pulse effect-flash effect-vignette',
-      t5: 'effect-pulse effect-shake effect-bloodmist',
-      t6: 'effect-pulse effect-claws effect-glow-boost',
-      t7: 'effect-pulse effect-shake effect-cinematic effect-glow-boost',
-      max: 'effect-pulse effect-shake effect-mori effect-glow-boost',
+      t1: 'effect-pulse effect-scanline effect-sheen',
+      t2: 'effect-pulse effect-scratch effect-sheen',
+      t3: 'effect-pulse effect-shake effect-scratch effect-scanline effect-sheen',
+      t4: 'effect-pulse effect-flash effect-vignette effect-sheen',
+      t5: 'effect-pulse effect-shake effect-bloodmist effect-sheen',
+      t6: 'effect-pulse effect-claws effect-glow-boost effect-sheen',
+      t7: 'effect-pulse effect-shake effect-cinematic effect-glow-boost effect-sheen',
+      max: 'effect-pulse effect-shake effect-mori effect-glow-boost effect-sheen',
     };
     const cls = map[tier] || 'effect-pulse';
     showBar('donation', cls);
