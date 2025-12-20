@@ -23,15 +23,20 @@
       </div>
     </div>
   </div>
-  <div class="bbits-mega" aria-live="polite" aria-hidden="true">
-    <div class="bbits-mega-banner">
-      <div class="bbits-mega-back"></div>
-      <div class="bbits-mega-title">FINAL MATCH</div>
-      <div class="bbits-mega-text">cheer 1000 · donador</div>
-      <div class="bbits-mega-shine"></div>
-    </div>
-  </div>
   <canvas id="bbits-particles" class="bbits-particles" aria-hidden="true"></canvas>
+</div>
+<div id="bbits-mega-root" class="bbits-mega" aria-live="polite" aria-hidden="true">
+  <div class="bbits-mega-banner">
+    <div class="bbits-mega-back"></div>
+    <div class="bbits-mega-title">!OHHHH MIL BITARDOS!</div>
+
+    <div class="bbits-mega-body">
+      <div class="bbits-mega-name">vr_aaron</div>
+      <div class="bbits-mega-bits">1000 bits</div>
+    </div>
+
+    <div class="bbits-mega-shine"></div>
+  </div>
 </div>
 ```
 
@@ -50,6 +55,7 @@
   --donor-bg-a: 0.22;
   --mega-scale: 1;
   --mega-glow: 0.35;
+  --mega-y: 22%;
 }
 
 #bbits-root {
@@ -422,17 +428,20 @@
 .bbits-mega {
   position: fixed;
   left: 50%;
-  top: 45%;
+  top: var(--mega-y, 22%);
   transform: translate(-50%, -50%) scale(var(--mega-scale, 1));
-  width: min(1100px, 92vw);
+  width: min(1200px, 94vw);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99999;
   opacity: 0;
 }
 
 .bbits-mega.visible {
   opacity: 1;
-  animation: bbits-mega-in 900ms ease-out, bbits-mega-out 420ms ease-in forwards;
+}
+
+.bbits-mega.visible .bbits-mega-banner {
+  animation: bbits-mega-in 900ms cubic-bezier(.16,.84,.24,1);
 }
 
 .bbits-mega.leaving {
@@ -448,45 +457,61 @@
 
 .bbits-mega-back {
   position: absolute;
-  inset: -16px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(220, 20, 60, 0.5));
-  border-radius: 16px;
+  inset: -14px;
+  background: linear-gradient(90deg, rgba(220, 20, 60, 0.8), rgba(80, 10, 18, 0.65));
+  border-radius: 18px;
   transform: skewX(-12deg);
   opacity: 0.92;
-  box-shadow: 0 0 32px rgba(255, 255, 255, var(--mega-glow, 0.35)),
-    0 0 42px rgba(220, 20, 60, 0.35);
+  box-shadow: 0 0 24px rgba(220, 20, 60, 0.45), 0 8px 22px rgba(0, 0, 0, 0.6);
+  outline: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .bbits-mega-title {
   position: relative;
-  padding: 18px 26px 6px 26px;
+  padding: 18px 26px 4px 26px;
   font-weight: 900;
-  font-size: clamp(34px, 5vw, 64px);
+  font-size: clamp(64px, 6vw, 78px);
   text-transform: uppercase;
-  color: #fff;
+  color: #f8f8f8;
   transform: skewX(12deg);
   letter-spacing: -0.02em;
-  text-shadow: 0 0 14px rgba(255, 255, 255, 0.9), 0 0 32px rgba(220, 20, 60, 0.55);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 24px rgba(220, 20, 60, 0.4);
 }
 
-.bbits-mega-text {
+.bbits-mega-body {
   position: relative;
   padding: 0 26px 18px 26px;
-  font-weight: 800;
-  font-size: clamp(16px, 3vw, 26px);
-  color: #f7f7f7;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
   transform: skewX(12deg);
-  letter-spacing: 0.08em;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 18px rgba(220, 20, 60, 0.45);
+  font-variant-numeric: tabular-nums;
+}
+
+.bbits-mega-name {
+  font-weight: 800;
+  font-size: clamp(38px, 4vw, 48px);
+  color: #f6f6f6;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 18px rgba(220, 20, 60, 0.38);
+  max-width: 50%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.bbits-mega-bits {
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 30px);
+  color: #f2e9e9;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(220, 20, 60, 0.32);
+}
+
 .bbits-mega-shine {
   position: absolute;
-  inset: -20px;
-  background: linear-gradient(115deg, rgba(255, 255, 255, 0.28), transparent 45%);
+  inset: -18px;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0.18), transparent 50%);
   mix-blend-mode: screen;
   border-radius: 18px;
   transform: skewX(-12deg);
@@ -494,17 +519,16 @@
 }
 
 .bbits-mega.visible .bbits-mega-shine {
-  animation: bbits-mega-shine 800ms ease;
+  animation: bbits-mega-shine 900ms ease;
 }
 
 .bbits-mega.mega-t7 .bbits-mega-back,
 .bbits-mega.mega-max .bbits-mega-back {
-  box-shadow: 0 0 38px rgba(255, 255, 255, var(--mega-glow, 0.35)),
-    0 0 50px rgba(220, 20, 60, 0.5);
+  box-shadow: 0 0 28px rgba(220, 20, 60, 0.55), 0 10px 28px rgba(0, 0, 0, 0.6);
 }
 
 .bbits-mega.mega-max .bbits-mega-title {
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
 }
 
 .bbits.visible.effect-glow-boost .bbits-bar-fill {
@@ -801,15 +825,19 @@
   }
 
   .bbits-mega {
-    top: 42%;
+    --mega-y: 18%;
   }
 
   .bbits-mega-title {
-    font-size: clamp(30px, 9vw, 46px);
+    font-size: clamp(40px, 11vw, 48px);
   }
 
-  .bbits-mega-text {
-    font-size: clamp(15px, 6vw, 22px);
+  .bbits-mega-name {
+    font-size: clamp(26px, 8vw, 32px);
+  }
+
+  .bbits-mega-bits {
+    font-size: clamp(18px, 7vw, 22px);
   }
 }
 ```
@@ -844,9 +872,10 @@
   const goalEl = root.querySelector('.bbits-goal');
   const labelEl = root.querySelector('.bbits-label');
   const donorEl = root.querySelector('.bbits-donor');
-  const megaEl = root.querySelector('.bbits-mega');
-  const megaTitleEl = root.querySelector('.bbits-mega-title');
-  const megaTextEl = root.querySelector('.bbits-mega-text');
+  const megaRoot = document.getElementById('bbits-mega-root');
+  const megaTitleEl = megaRoot?.querySelector('.bbits-mega-title');
+  const megaNameEl = megaRoot?.querySelector('.bbits-mega-name');
+  const megaBitsEl = megaRoot?.querySelector('.bbits-mega-bits');
   const particleCanvas = /** @type {HTMLCanvasElement} */ (root.querySelector('#bbits-particles'));
 
   const defaultSettings = {
@@ -870,6 +899,14 @@
     donorBaseMs: 2600,
     donorExtraMsPer100Bits: 200,
     donorExtraMsCap: 2200,
+    megaDonorEnabled: true,
+    megaDonorThreshold: 1000,
+    megaDonorTitle: '!OHHHH MIL BITARDOS!',
+    megaDonorMinTotalMs: 5200,
+    megaDonorOutMs: 420,
+    megaDonorInMs: 900,
+    megaDonorMaxScale: 1.18,
+    megaDonorYPercent: 22,
     megaDonorEnabled: true,
     megaDonorThreshold: 1000,
     megaDonorTitle: 'FINAL MATCH',
@@ -952,6 +989,9 @@
     document.documentElement.style.setProperty('--bbits-exit-ms', `${s.exitDurationMs || 550}ms`);
     root.classList.toggle('reduced-motion', Boolean(s.reducedMotion));
     labelEl.textContent = s.goalLabel || defaultSettings.goalLabel;
+    if (megaRoot) {
+      megaRoot.style.setProperty('--mega-y', `${s.megaDonorYPercent || defaultSettings.megaDonorYPercent}%`);
+    }
     root.style.left = root.style.right = root.style.top = root.style.bottom = 'auto';
     const offset = `${s.position?.includes('bottom') ? s.offsetY || 3 : s.offsetY || 3}%`;
     const offsetX = `${s.offsetX || 3}%`;
@@ -1187,42 +1227,37 @@
   }
 
   function showMegaDonor(bits, donor) {
-    if (!megaEl || !state.settings.megaDonorEnabled) return;
+    if (!megaRoot || !state.settings.megaDonorEnabled) return;
     if (bits < state.settings.megaDonorThreshold) return;
     const safeName = sanitizeName(donor);
-    megaTitleEl.textContent = state.settings.megaDonorTitle || defaultSettings.megaDonorTitle;
-    megaTextEl.textContent = (state.settings.megaDonorTemplate || defaultSettings.megaDonorTemplate)
-      .replace('{bits}', bits)
-      .replace('{name}', safeName);
-    const intensity = clamp(Math.log10(bits / state.settings.megaDonorThreshold + 1), 0, 1);
+    if (megaTitleEl) megaTitleEl.textContent = state.settings.megaDonorTitle || defaultSettings.megaDonorTitle;
+    if (megaNameEl) megaNameEl.textContent = safeName;
+    if (megaBitsEl) megaBitsEl.textContent = `${bits} bits`;
+    const intensity = clamp(Math.log10(bits / state.settings.megaDonorThreshold), 0, 1);
     const scale =
       1 +
       intensity *
         ((state.settings.megaDonorMaxScale || defaultSettings.megaDonorMaxScale) - 1);
-    const glow = 0.35 + intensity * 0.5;
-    megaEl.style.setProperty('--mega-scale', scale.toFixed(3));
-    megaEl.style.setProperty('--mega-glow', glow.toFixed(3));
+    megaRoot.style.setProperty('--mega-scale', scale.toFixed(3));
     const tier = tierForBits(bits);
     const tierClass = tier === 'max' ? 'mega-max' : tier === 't7' ? 'mega-t7' : '';
-    megaEl.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
-    void megaEl.offsetWidth;
-    if (tierClass) megaEl.classList.add(tierClass);
-    megaEl.classList.add('visible');
+    megaRoot.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
+    void megaRoot.offsetWidth;
+    if (tierClass) megaRoot.classList.add(tierClass);
+    megaRoot.setAttribute('aria-hidden', 'false');
+    megaRoot.classList.add('visible');
     if (state.megaTimer) clearTimeout(state.megaTimer);
     if (state.megaLeaveTimer) clearTimeout(state.megaLeaveTimer);
-    const extra = clamp(Math.floor(bits / 500) * 250, 0, state.settings.megaDonorExtraMsCap);
-    const duration = state.settings.reducedMotion
-      ? Math.min(1200, state.settings.megaDonorBaseMs || defaultSettings.megaDonorBaseMs)
-      : Math.min(
-          (state.settings.megaDonorBaseMs || defaultSettings.megaDonorBaseMs) + extra,
-          3200
-        );
+    const extra = clamp(Math.floor(bits / 1000) * 450, 0, 1400);
+    const total = Math.max(state.settings.megaDonorMinTotalMs || defaultSettings.megaDonorMinTotalMs, 5200) + extra;
+    const outMs = state.settings.megaDonorOutMs || defaultSettings.megaDonorOutMs;
     state.megaTimer = setTimeout(() => {
-      megaEl.classList.add('leaving');
+      megaRoot.classList.add('leaving');
       state.megaLeaveTimer = setTimeout(() => {
-        megaEl.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
-      }, 450);
-    }, duration);
+        megaRoot.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
+        megaRoot.setAttribute('aria-hidden', 'true');
+      }, outMs);
+    }, Math.max(0, total - outMs));
   }
 
   function triggerParticles(tier, forceHigh = false) {
