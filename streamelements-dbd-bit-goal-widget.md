@@ -26,11 +26,15 @@
   <canvas id="bbits-particles" class="bbits-particles" aria-hidden="true"></canvas>
 </div>
 <div id="bbits-epic" class="bbits-epic" aria-hidden="true">
-  <div class="bbits-epic-inner">
-    <div class="bbits-epic-headline"></div>
-    <div class="bbits-epic-subline"></div>
-    <div class="bbits-epic-sheen"></div>
-    <div class="bbits-epic-backdrop"></div>
+  <div class="bbits-epic-stage">
+    <div class="bbits-epic-glow"></div>
+    <div class="bbits-epic-ribbon">
+      <div class="bbits-epic-sweep"></div>
+      <div class="bbits-epic-text">
+        <div class="bbits-epic-headline"></div>
+        <div class="bbits-epic-subline"></div>
+      </div>
+    </div>
   </div>
 </div>
 ```
@@ -435,33 +439,63 @@
   opacity: 1;
 }
 
-.bbits-epic.play-in .bbits-epic-inner {
+.bbits-epic.play-in .bbits-epic-ribbon {
   animation: bbits-epic-in 520ms cubic-bezier(0.16, 0.84, 0.24, 1);
 }
 
-.bbits-epic.play-out .bbits-epic-inner {
+.bbits-epic.play-out .bbits-epic-ribbon {
   animation: bbits-epic-out 900ms ease;
 }
 
-.bbits-epic-inner {
+.bbits-epic-stage {
   position: relative;
-  padding: 26px 40px 24px;
-  background: linear-gradient(110deg, rgba(10, 10, 12, 0.75), rgba(60, 12, 18, 0.75));
-  border-radius: 22px;
-  border: 1px solid rgba(220, 20, 60, 0.45);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 24px rgba(220, 20, 60, 0.35);
-  overflow: hidden;
-  transform: scale(var(--mega-scale, 1));
-  transform-origin: center;
+  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.6));
 }
 
-.bbits-epic-inner::after {
+.bbits-epic-glow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.22), transparent 60%);
+  filter: blur(18px);
+  opacity: 0.9;
+}
+
+.bbits-epic-ribbon {
+  position: relative;
+  padding: 22px 52px;
+  background: linear-gradient(125deg, rgba(18, 18, 22, 0.9), rgba(40, 10, 16, 0.9));
+  border: 1px solid rgba(220, 20, 60, 0.55);
+  border-radius: 20px;
+  clip-path: polygon(4% 0, 96% 0, 100% 38%, 94% 100%, 6% 100%, 0 62%);
+  overflow: hidden;
+  transform: scale(var(--mega-scale, 1));
+}
+
+.bbits-epic-ribbon::before,
+.bbits-epic-ribbon::after {
   content: '';
   position: absolute;
-  inset: -8px;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 42%);
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 198, 84, 0.25), transparent 55%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.bbits-epic-ribbon::after {
+  background: linear-gradient(120deg, rgba(220, 20, 60, 0.35), transparent 60%);
   mix-blend-mode: screen;
-  opacity: 0.6;
+}
+
+.bbits-epic-sweep {
+  position: absolute;
+  inset: -10px;
+  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.24) 50%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.bbits-epic.play-in .bbits-epic-sweep {
+  animation: bbits-epic-shine 880ms ease;
 }
 
 .bbits-epic-headline {
@@ -489,6 +523,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.bbits-epic-text {
+  position: relative;
+  z-index: 2;
+  text-align: center;
 }
 
 .bbits-epic-sheen {
