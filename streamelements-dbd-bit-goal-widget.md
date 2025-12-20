@@ -25,17 +25,10 @@
   </div>
   <canvas id="bbits-particles" class="bbits-particles" aria-hidden="true"></canvas>
 </div>
-<div id="bbits-mega-root" class="bbits-mega" aria-live="polite" aria-hidden="true">
-  <div class="bbits-mega-banner">
-    <div class="bbits-mega-back"></div>
-    <div class="bbits-mega-title">!OHHHH MIL BITARDOS!</div>
-
-    <div class="bbits-mega-body">
-      <div class="bbits-mega-name">vr_aaron</div>
-      <div class="bbits-mega-bits">1000 bits</div>
-    </div>
-
-    <div class="bbits-mega-shine"></div>
+<div id="bbits-epic" class="bbits-epic" aria-hidden="true">
+  <div class="bbits-epic-inner">
+    <div class="bbits-epic-headline"></div>
+    <div class="bbits-epic-subline"></div>
   </div>
 </div>
 ```
@@ -425,110 +418,73 @@
   box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.28), 0 0 26px rgba(220, 20, 60, 0.42);
 }
 
-.bbits-mega {
+.bbits-epic {
   position: fixed;
   left: 50%;
-  top: var(--mega-y, 22%);
-  transform: translate(-50%, -50%) scale(var(--mega-scale, 1));
-  width: min(1200px, 94vw);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(720px, 70vw, 1200px);
   pointer-events: none;
   z-index: 99999;
   opacity: 0;
 }
 
-.bbits-mega.visible {
+.bbits-epic.is-on {
   opacity: 1;
 }
 
-.bbits-mega.visible .bbits-mega-banner {
-  animation: bbits-mega-in 900ms cubic-bezier(.16,.84,.24,1);
+.bbits-epic.play-in .bbits-epic-inner {
+  animation: bbits-epic-in 520ms cubic-bezier(0.16, 0.84, 0.24, 1);
 }
 
-.bbits-mega.leaving {
-  opacity: 0;
-  transition: opacity 420ms ease;
+.bbits-epic.play-out .bbits-epic-inner {
+  animation: bbits-epic-out 900ms ease;
 }
 
-.bbits-mega-banner {
+.bbits-epic-inner {
   position: relative;
-  overflow: visible;
-  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.55));
+  padding: 26px 40px 24px;
+  background: linear-gradient(110deg, rgba(10, 10, 12, 0.75), rgba(60, 12, 18, 0.75));
+  border-radius: 22px;
+  border: 1px solid rgba(220, 20, 60, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 24px rgba(220, 20, 60, 0.35);
+  overflow: hidden;
 }
 
-.bbits-mega-back {
+.bbits-epic-inner::after {
+  content: '';
   position: absolute;
-  inset: -14px;
-  background: linear-gradient(90deg, rgba(220, 20, 60, 0.8), rgba(80, 10, 18, 0.65));
-  border-radius: 18px;
-  transform: skewX(-12deg);
-  opacity: 0.92;
-  box-shadow: 0 0 24px rgba(220, 20, 60, 0.45), 0 8px 22px rgba(0, 0, 0, 0.6);
-  outline: 1px solid rgba(255, 255, 255, 0.18);
+  inset: -8px;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 42%);
+  mix-blend-mode: screen;
+  opacity: 0.6;
 }
 
-.bbits-mega-title {
+.bbits-epic-headline {
   position: relative;
-  padding: 18px 26px 4px 26px;
-  font-weight: 900;
-  font-size: clamp(64px, 6vw, 78px);
-  text-transform: uppercase;
-  color: #f8f8f8;
-  transform: skewX(12deg);
-  letter-spacing: -0.02em;
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 24px rgba(220, 20, 60, 0.4);
-}
-
-.bbits-mega-body {
-  position: relative;
-  padding: 0 26px 18px 26px;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  transform: skewX(12deg);
-  font-variant-numeric: tabular-nums;
-}
-
-.bbits-mega-name {
   font-weight: 800;
-  font-size: clamp(38px, 4vw, 48px);
+  font-size: clamp(42px, 6vw, 88px);
+  text-transform: uppercase;
   color: #f6f6f6;
-  letter-spacing: 0.01em;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 18px rgba(220, 20, 60, 0.38);
-  max-width: 50%;
+  text-align: center;
+  letter-spacing: -0.015em;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.72), 0 0 20px rgba(220, 20, 60, 0.36);
+  margin-bottom: 6px;
+}
+
+.bbits-epic-subline {
+  position: relative;
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 32px);
+  color: #f0eeee;
+  text-align: center;
+  letter-spacing: 0.04em;
+  opacity: 0.92;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 14px rgba(220, 20, 60, 0.32);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.bbits-mega-bits {
-  font-weight: 800;
-  font-size: clamp(24px, 3vw, 30px);
-  color: #f2e9e9;
-  letter-spacing: 0.06em;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(220, 20, 60, 0.32);
-}
-
-.bbits-mega-shine {
-  position: absolute;
-  inset: -18px;
-  background: linear-gradient(110deg, rgba(255, 255, 255, 0.18), transparent 50%);
-  mix-blend-mode: screen;
-  border-radius: 18px;
-  transform: skewX(-12deg);
-  opacity: 0;
-}
-
-.bbits-mega.visible .bbits-mega-shine {
-  animation: bbits-mega-shine 900ms ease;
-}
-
-.bbits-mega.mega-t7 .bbits-mega-back,
-.bbits-mega.mega-max .bbits-mega-back {
-  box-shadow: 0 0 28px rgba(220, 20, 60, 0.55), 0 10px 28px rgba(0, 0, 0, 0.6);
-}
-
-.bbits-mega.mega-max .bbits-mega-title {
-  letter-spacing: 0.005em;
 }
 
 .bbits.visible.effect-glow-boost .bbits-bar-fill {
@@ -736,41 +692,32 @@
   }
 }
 
-@keyframes bbits-mega-in {
+@keyframes bbits-epic-in {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(calc(var(--mega-scale, 1) * 0.9));
+    transform: translate(-50%, -50%) scale(0.98);
+    filter: blur(4px);
   }
   60% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(calc(var(--mega-scale, 1) * 1.05));
+    transform: translate(-50%, -50%) scale(1.03);
+    filter: blur(1px);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(var(--mega-scale, 1));
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
   }
 }
 
-@keyframes bbits-mega-out {
+@keyframes bbits-epic-out {
   0% {
     opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
   100% {
     opacity: 0;
-  }
-}
-
-@keyframes bbits-mega-shine {
-  0% {
-    opacity: 0;
-    transform: skewX(-12deg) translateX(-40%);
-  }
-  40% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 0;
-    transform: skewX(-12deg) translateX(40%);
+    transform: translate(-50%, -50%) scale(1.02);
   }
 }
 
@@ -824,19 +771,15 @@
     max-width: 200px;
   }
 
-  .bbits-mega {
-    --mega-y: 18%;
+  .bbits-epic {
+    top: 50%;
   }
 
-  .bbits-mega-title {
+  .bbits-epic-headline {
     font-size: clamp(40px, 11vw, 48px);
   }
 
-  .bbits-mega-name {
-    font-size: clamp(26px, 8vw, 32px);
-  }
-
-  .bbits-mega-bits {
+  .bbits-epic-subline {
     font-size: clamp(18px, 7vw, 22px);
   }
 }
@@ -872,10 +815,9 @@
   const goalEl = root.querySelector('.bbits-goal');
   const labelEl = root.querySelector('.bbits-label');
   const donorEl = root.querySelector('.bbits-donor');
-  const megaRoot = document.getElementById('bbits-mega-root');
-  const megaTitleEl = megaRoot?.querySelector('.bbits-mega-title');
-  const megaNameEl = megaRoot?.querySelector('.bbits-mega-name');
-  const megaBitsEl = megaRoot?.querySelector('.bbits-mega-bits');
+  const epicRoot = root.querySelector('#bbits-epic');
+  const epicHeadlineEl = epicRoot?.querySelector('.bbits-epic-headline');
+  const epicSubEl = epicRoot?.querySelector('.bbits-epic-subline');
   const particleCanvas = /** @type {HTMLCanvasElement} */ (root.querySelector('#bbits-particles'));
 
   const defaultSettings = {
@@ -907,13 +849,14 @@
     megaDonorInMs: 900,
     megaDonorMaxScale: 1.18,
     megaDonorYPercent: 22,
-    megaDonorEnabled: true,
-    megaDonorThreshold: 1000,
-    megaDonorTitle: 'FINAL MATCH',
     megaDonorTemplate: '{name} · {bits} bits',
     megaDonorBaseMs: 1800,
     megaDonorExtraMsCap: 1400,
-    megaDonorMaxScale: 1.25,
+    epicEnabled: true,
+    epicThresholdBits: 1000,
+    epicDurationMs: 5200,
+    epicHeadline: '!ohhhh mil bitardos!',
+    epicSubTemplate: '{name} · {bits} bits',
     colors: {
       accentRed: '#dc143c',
       accentWhite: '#f5f5f5',
@@ -989,8 +932,8 @@
     document.documentElement.style.setProperty('--bbits-exit-ms', `${s.exitDurationMs || 550}ms`);
     root.classList.toggle('reduced-motion', Boolean(s.reducedMotion));
     labelEl.textContent = s.goalLabel || defaultSettings.goalLabel;
-    if (megaRoot) {
-      megaRoot.style.setProperty('--mega-y', `${s.megaDonorYPercent || defaultSettings.megaDonorYPercent}%`);
+    if (epicRoot) {
+      epicRoot.style.setProperty('--mega-y', `${s.megaDonorYPercent || defaultSettings.megaDonorYPercent}%`);
     }
     root.style.left = root.style.right = root.style.top = root.style.bottom = 'auto';
     const offset = `${s.position?.includes('bottom') ? s.offsetY || 3 : s.offsetY || 3}%`;
@@ -1227,37 +1170,36 @@
   }
 
   function showMegaDonor(bits, donor) {
-    if (!megaRoot || !state.settings.megaDonorEnabled) return;
-    if (bits < state.settings.megaDonorThreshold) return;
+    if (!epicRoot || !state.settings.epicEnabled) return;
+    if (bits < state.settings.epicThresholdBits) return;
     const safeName = sanitizeName(donor);
-    if (megaTitleEl) megaTitleEl.textContent = state.settings.megaDonorTitle || defaultSettings.megaDonorTitle;
-    if (megaNameEl) megaNameEl.textContent = safeName;
-    if (megaBitsEl) megaBitsEl.textContent = `${bits} bits`;
-    const intensity = clamp(Math.log10(bits / state.settings.megaDonorThreshold), 0, 1);
+    const headline = state.settings.epicHeadline || defaultSettings.epicHeadline;
+    const sub = (state.settings.epicSubTemplate || defaultSettings.epicSubTemplate)
+      .replace('{bits}', bits)
+      .replace('{name}', safeName);
+    if (epicHeadlineEl) epicHeadlineEl.textContent = headline;
+    if (epicSubEl) epicSubEl.textContent = sub;
+    const intensity = clamp(Math.log10(bits / state.settings.epicThresholdBits), 0, 1);
     const scale =
       1 +
       intensity *
         ((state.settings.megaDonorMaxScale || defaultSettings.megaDonorMaxScale) - 1);
-    megaRoot.style.setProperty('--mega-scale', scale.toFixed(3));
-    const tier = tierForBits(bits);
-    const tierClass = tier === 'max' ? 'mega-max' : tier === 't7' ? 'mega-t7' : '';
-    megaRoot.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
-    void megaRoot.offsetWidth;
-    if (tierClass) megaRoot.classList.add(tierClass);
-    megaRoot.setAttribute('aria-hidden', 'false');
-    megaRoot.classList.add('visible');
+    epicRoot.style.setProperty('--mega-scale', scale.toFixed(3));
+    epicRoot.classList.remove('is-on', 'play-in', 'play-out');
+    void epicRoot.offsetWidth;
+    epicRoot.setAttribute('aria-hidden', 'false');
+    epicRoot.classList.add('is-on', 'play-in');
     if (state.megaTimer) clearTimeout(state.megaTimer);
     if (state.megaLeaveTimer) clearTimeout(state.megaLeaveTimer);
-    const extra = clamp(Math.floor(bits / 1000) * 450, 0, 1400);
-    const total = Math.max(state.settings.megaDonorMinTotalMs || defaultSettings.megaDonorMinTotalMs, 5200) + extra;
-    const outMs = state.settings.megaDonorOutMs || defaultSettings.megaDonorOutMs;
+    const duration = Math.max(state.settings.epicDurationMs || defaultSettings.epicDurationMs, 5200);
+    const outMs = 900;
     state.megaTimer = setTimeout(() => {
-      megaRoot.classList.add('leaving');
+      epicRoot.classList.add('play-out');
       state.megaLeaveTimer = setTimeout(() => {
-        megaRoot.classList.remove('visible', 'leaving', 'mega-t7', 'mega-max');
-        megaRoot.setAttribute('aria-hidden', 'true');
+        epicRoot.classList.remove('is-on', 'play-in', 'play-out');
+        epicRoot.setAttribute('aria-hidden', 'true');
       }, outMs);
-    }, Math.max(0, total - outMs));
+    }, Math.max(0, duration - outMs));
   }
 
   function triggerParticles(tier, forceHigh = false) {
