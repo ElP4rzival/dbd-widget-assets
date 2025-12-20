@@ -10,6 +10,7 @@
       </div>
       <div class="bbits-bar-overlay"></div>
       <div class="bbits-bar-effects"></div>
+      <div class="bbits-donor" aria-live="polite"></div>
       <div class="bbits-bar-numbers">
         <div class="bbits-left">
           <span class="bbits-current">0</span>
@@ -36,6 +37,9 @@
   --bbits-entrance-ms: 650ms;
   --bbits-exit-ms: 550ms;
   --bbits-font: 'Rajdhani', 'Inter', system-ui, sans-serif;
+  --donor-white-a: 0.9;
+  --donor-red-a: 0.55;
+  --donor-bg-a: 0.22;
 }
 
 #bbits-root {
@@ -144,12 +148,17 @@
   font-size: 15px;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 14px rgba(220, 20, 60, 0.45);
+  text-shadow: 0 0 6px rgba(255, 255, 255, var(--donor-white-a)), 0 0 14px rgba(220, 20, 60, var(--donor-red-a));
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
+  white-space: nowrap;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  mix-blend-mode: screen;
 }
 
 .bbits-donor.visible {
@@ -648,6 +657,12 @@
   .bbits-right {
     font-size: 13px;
   }
+
+  .bbits-donor {
+    right: 10px;
+    font-size: 14px;
+    max-width: 200px;
+  }
 }
 ```
 
@@ -698,6 +713,12 @@
     useExternalFonts: false,
     goalLabel: 'meta: bits',
     completedLabel: 'completada',
+    showDonorEnabled: true,
+    donorTemplate: 'cheer {bits} · {name}',
+    donorMaxNameLength: 22,
+    donorBaseMs: 2600,
+    donorExtraMsPer100Bits: 200,
+    donorExtraMsCap: 2200,
     colors: {
       accentRed: '#dc143c',
       accentWhite: '#f5f5f5',
@@ -960,6 +981,16 @@
 
   function showDonor(bits, donor) {
     if (!donorEl) return;
+    if (!state.settings.showDonorEnabled) return;
+    const safeName = (() => {
+      const base = (donor || '').trim();
+      if (!base) return 'donador';
+      if (base.length <= state.settings.donorMaxNameLength) return base;
+      return `${base.slice(0, state.settings.donorMaxNameLength).trim()}…`;
+    })();
+    const text = (state.settings.donorTemplate || defaultSettings.donorTemplate)
+      .replace('{bits}', bits)
+      .replace('{name}', safeName);
     const tier = tierForBits(bits);
     const tierClass = `donor-${tier}`;
     const allTiers = [
@@ -973,25 +1004,23 @@
       'donor-t7',
       'donor-max',
     ];
-    donorEl.textContent = `cheer ${bits} · ${donor}`;
+    donorEl.textContent = text;
     donorEl.classList.remove('visible', ...allTiers);
     void donorEl.offsetWidth;
     donorEl.classList.add('visible', tierClass);
     if (state.donorTimer) clearTimeout(state.donorTimer);
-    const durations = {
-      t0: 2500,
-      t1: 3000,
-      t2: 3500,
-      t3: 4000,
-      t4: 4500,
-      t5: 5000,
-      t6: 5500,
-      t7: 6000,
-      max: 6500,
-    };
+    const extra = Math.min(
+      state.settings.donorExtraMsCap,
+      Math.floor(bits / 100) * state.settings.donorExtraMsPer100Bits
+    );
+    const tierBonus = tier === 't6' || tier === 't7' || tier === 'max' ? 400 : 0;
+    const duration = Math.min(
+      (state.settings.donorBaseMs || defaultSettings.donorBaseMs) + extra + tierBonus,
+      7000
+    );
     state.donorTimer = setTimeout(() => {
       donorEl.classList.remove('visible', ...allTiers);
-    }, durations[tier] || 3000);
+    }, duration);
   }
 
   function triggerParticles(tier, forceHigh = false) {
@@ -1090,6 +1119,7 @@
     if (!isAuthorized(event)) return log('command ignored (not authorized)');
     const sub = (parts[1] || '').toLowerCase();
     const val = parts[2];
+    const rest = parts.slice(3).join(' ');
     switch (sub) {
       case 'show':
         showBar('donation', 'effect-pulse');
@@ -1132,6 +1162,29 @@
             }, 1400);
             persist();
           }
+        }
+        break;
+      case 'donor':
+        if (val === 'on') {
+          state.settings.showDonorEnabled = true;
+        } else if (val === 'off') {
+          state.settings.showDonorEnabled = false;
+          donorEl?.classList.remove(
+            'visible',
+            'donor-t0',
+            'donor-t1',
+            'donor-t2',
+            'donor-t3',
+            'donor-t4',
+            'donor-t5',
+            'donor-t6',
+            'donor-t7',
+            'donor-max'
+          );
+        } else if (val === 'test') {
+          const bitsArg = Number(parts[3]) || 0;
+          const nameArg = rest || 'donador';
+          showDonor(bitsArg, nameArg);
         }
         break;
       default:
