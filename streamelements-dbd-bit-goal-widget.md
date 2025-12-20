@@ -29,6 +29,8 @@
   <div class="bbits-epic-inner">
     <div class="bbits-epic-headline"></div>
     <div class="bbits-epic-subline"></div>
+    <div class="bbits-epic-sheen"></div>
+    <div class="bbits-epic-backdrop"></div>
   </div>
 </div>
 ```
@@ -421,7 +423,7 @@
 .bbits-epic {
   position: fixed;
   left: 50%;
-  top: 50%;
+  top: var(--mega-y, 22%);
   transform: translate(-50%, -50%);
   width: clamp(720px, 70vw, 1200px);
   pointer-events: none;
@@ -449,6 +451,8 @@
   border: 1px solid rgba(220, 20, 60, 0.45);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 24px rgba(220, 20, 60, 0.35);
   overflow: hidden;
+  transform: scale(var(--mega-scale, 1));
+  transform-origin: center;
 }
 
 .bbits-epic-inner::after {
@@ -485,6 +489,21 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.bbits-epic-sheen {
+  position: absolute;
+  inset: -14px;
+  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.bbits-epic-backdrop {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.32), transparent 65%);
+  pointer-events: none;
 }
 
 .bbits.visible.effect-glow-boost .bbits-bar-fill {
@@ -695,17 +714,17 @@
 @keyframes bbits-epic-in {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.98);
     filter: blur(4px);
+    transform: scale(0.98);
   }
   60% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.03);
+    transform: scale(1.03);
     filter: blur(1px);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
     filter: blur(0);
   }
 }
@@ -713,11 +732,25 @@
 @keyframes bbits-epic-out {
   0% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes bbits-epic-shine {
+  0% {
+    opacity: 0;
+    transform: translateX(-40%);
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(40%);
   }
 }
 
@@ -772,7 +805,7 @@
   }
 
   .bbits-epic {
-    top: 50%;
+    --mega-y: 18%;
   }
 
   .bbits-epic-headline {
@@ -815,7 +848,7 @@
   const goalEl = root.querySelector('.bbits-goal');
   const labelEl = root.querySelector('.bbits-label');
   const donorEl = root.querySelector('.bbits-donor');
-  const epicRoot = root.querySelector('#bbits-epic');
+  const epicRoot = document.getElementById('bbits-epic');
   const epicHeadlineEl = epicRoot?.querySelector('.bbits-epic-headline');
   const epicSubEl = epicRoot?.querySelector('.bbits-epic-subline');
   const particleCanvas = /** @type {HTMLCanvasElement} */ (root.querySelector('#bbits-particles'));
