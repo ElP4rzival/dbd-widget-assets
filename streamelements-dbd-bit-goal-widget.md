@@ -11,10 +11,14 @@
       <div class="bbits-bar-overlay"></div>
       <div class="bbits-bar-effects"></div>
       <div class="bbits-bar-numbers">
-        <span class="bbits-current">0</span>
-        <span class="bbits-divider">/</span>
-        <span class="bbits-goal">5,000</span>
-        <span class="bbits-percent">0%</span>
+        <div class="bbits-left">
+          <span class="bbits-current">0</span>
+          <span class="bbits-divider">/</span>
+          <span class="bbits-goal">5,000</span>
+        </div>
+        <div class="bbits-right">
+          <span class="bbits-label">meta: bits</span>
+        </div>
       </div>
     </div>
   </div>
@@ -137,22 +141,35 @@
   inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.bbits-left {
+  display: flex;
+  align-items: baseline;
   gap: 6px;
   font-weight: 700;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.7),
-    0 0 18px rgba(255, 255, 255, 0.4), 0 0 28px rgba(220, 20, 60, 0.35);
+  font-size: 22px;
+  color: var(--bbits-accent-white);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.85), 0 0 12px rgba(255, 255, 255, 0.5),
+    0 0 20px rgba(220, 20, 60, 0.32);
+  letter-spacing: 0.003em;
 }
 
-.bbits-bar-numbers .bbits-divider {
-  opacity: 0.78;
+.bbits-left .bbits-divider {
+  opacity: 0.72;
 }
 
-.bbits-bar-numbers .bbits-percent {
-  margin-left: 6px;
-  font-weight: 600;
-  font-size: 14px;
+.bbits-right {
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.6), 0 0 12px rgba(220, 20, 60, 0.28);
+  letter-spacing: 0.08em;
 }
 
 .bbits-particles {
@@ -282,6 +299,26 @@
 
 .bbits.visible.effect-mori .bbits-bar::before {
   box-shadow: 0 0 34px rgba(220, 20, 60, 0.45), 0 0 18px rgba(255, 255, 255, 0.3);
+}
+
+.bbits.visible.effect-goal-complete .bbits-bar-effects::after {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(circle at 45% 55%, rgba(220, 20, 60, 0.55), transparent 65%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: bbits-goal-complete 1.2s ease;
+}
+
+.bbits.visible.effect-goal-complete .bbits-bar::before {
+  box-shadow: 0 0 36px rgba(220, 20, 60, 0.5), 0 0 22px rgba(255, 255, 255, 0.4);
+}
+
+.bbits.visible.effect-goal-complete .bbits-bar-fill {
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.28), 0 0 26px rgba(220, 20, 60, 0.42);
 }
 
 .bbits.visible.effect-glow-boost .bbits-bar-fill {
@@ -416,6 +453,21 @@
   }
 }
 
+@keyframes bbits-goal-complete {
+  0% {
+    opacity: 0.65;
+    transform: scale(0.95);
+  }
+  40% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
 @keyframes bbits-sheen {
   0% {
     opacity: 0;
@@ -449,7 +501,15 @@
   }
 
   .bbits-bar-numbers {
-    font-size: 14px;
+    padding: 0 12px;
+  }
+
+  .bbits-left {
+    font-size: 19px;
+  }
+
+  .bbits-right {
+    font-size: 13px;
   }
 }
 ```
@@ -482,7 +542,7 @@
   const fill = root.querySelector('.bbits-bar-fill');
   const currentEl = root.querySelector('.bbits-current');
   const goalEl = root.querySelector('.bbits-goal');
-  const percentEl = root.querySelector('.bbits-percent');
+  const labelEl = root.querySelector('.bbits-label');
   const particleCanvas = /** @type {HTMLCanvasElement} */ (root.querySelector('#bbits-particles'));
 
   const defaultSettings = {
@@ -498,6 +558,8 @@
     particleMode: 'low', // off | low | high
     reducedMotion: false,
     useExternalFonts: false,
+    goalLabel: 'meta: bits',
+    completedLabel: 'completada',
     colors: {
       accentRed: '#dc143c',
       accentWhite: '#f5f5f5',
@@ -522,6 +584,7 @@
     settings: { ...defaultSettings },
     current: 0,
     goal: defaultSettings.goalBits,
+    hasCompleted: false,
     visible: false,
     animFrame: null,
     hideTimer: null,
@@ -549,6 +612,7 @@
     document.documentElement.style.setProperty('--bbits-entrance-ms', `${s.entranceDurationMs || 650}ms`);
     document.documentElement.style.setProperty('--bbits-exit-ms', `${s.exitDurationMs || 550}ms`);
     root.classList.toggle('reduced-motion', Boolean(s.reducedMotion));
+    labelEl.textContent = s.goalLabel || defaultSettings.goalLabel;
     root.style.left = root.style.right = root.style.top = root.style.bottom = 'auto';
     const offset = `${s.position?.includes('bottom') ? s.offsetY || 3 : s.offsetY || 3}%`;
     const offsetX = `${s.offsetX || 3}%`;
@@ -587,7 +651,7 @@
   function persist() {
     if (!state.settings.persistProgress) return;
     try {
-      const payload = { current: state.current, goal: state.goal };
+      const payload = { current: state.current, goal: state.goal, hasCompleted: state.hasCompleted };
       localStorage.setItem(storageKey, JSON.stringify(payload));
     } catch (err) {
       log('persist failed', err);
@@ -602,6 +666,7 @@
         const data = JSON.parse(raw);
         if (Number.isFinite(data.current)) state.current = data.current;
         if (Number.isFinite(data.goal)) state.goal = data.goal;
+        if (typeof data.hasCompleted === 'boolean') state.hasCompleted = data.hasCompleted;
       }
     } catch (err) {
       log('restore failed', err);
@@ -611,10 +676,13 @@
   function updateNumbers() {
     currentEl.textContent = fmt(state.current);
     goalEl.textContent = fmt(state.goal);
-    const pct = state.goal > 0 ? clamp((state.current / state.goal) * 100, 0, 9999) : 0;
-    percentEl.textContent = state.settings.showPercent === false ? '' : `${Math.floor(pct)}%`;
-    fill.style.width = `${clamp(pct, 0, 100)}%`;
+    const pct = state.goal > 0 ? clamp((state.current / state.goal) * 100, 0, 100) : 0;
+    fill.style.width = `${pct}%`;
     state.lastPercent = pct;
+    const completed = state.current >= state.goal;
+    labelEl.textContent = completed
+      ? state.settings.completedLabel || defaultSettings.completedLabel
+      : state.settings.goalLabel || defaultSettings.goalLabel;
   }
 
   function tweenProgress(target) {
@@ -644,12 +712,14 @@
 
   function setGoal(goal) {
     state.goal = Math.max(1, Number(goal) || defaultSettings.goalBits);
+    state.hasCompleted = state.current >= state.goal;
     updateNumbers();
     persist();
   }
 
   function setCurrent(value) {
     state.current = Math.max(0, Number(value) || 0);
+    state.hasCompleted = state.current >= state.goal;
     updateNumbers();
     persist();
   }
@@ -679,8 +749,11 @@
         'effect-mori',
         'effect-glow-soft',
         'effect-glow-boost',
+        'effect-sheen',
+        'effect-goal-complete',
       ];
       root.classList.remove(...effectClasses);
+      void root.offsetWidth;
       root.classList.add(...effectClass.split(' ').filter(Boolean));
     }
     state.visible = true;
@@ -718,7 +791,7 @@
     return 'none';
   }
 
-  function applyTierEffect(tier) {
+  function applyTierEffect(tier, extraClass = '', forceHighParticles = false) {
     const map = {
       t0: 'effect-pulse effect-glow-soft',
       t1: 'effect-pulse effect-scanline effect-sheen',
@@ -730,18 +803,18 @@
       t7: 'effect-pulse effect-shake effect-cinematic effect-glow-boost effect-sheen',
       max: 'effect-pulse effect-shake effect-mori effect-glow-boost effect-sheen',
     };
-    const cls = map[tier] || 'effect-pulse';
+    const cls = `${map[tier] || 'effect-pulse'} ${extraClass}`.trim();
     showBar('donation', cls);
-    triggerParticles(tier);
+    triggerParticles(tier, forceHighParticles);
   }
 
-  function triggerParticles(tier) {
-    if (state.settings.particleMode === 'off') return;
-    if (tier !== 't6' && tier !== 't7' && tier !== 'max') return;
+  function triggerParticles(tier, forceHigh = false) {
+    if (state.settings.particleMode === 'off' && !forceHigh) return;
+    if (!forceHigh && tier !== 't6' && tier !== 't7' && tier !== 'max') return;
     const ctx = particleCanvas.getContext('2d');
     const density =
-      tier === 'max'
-        ? state.settings.particleMode === 'high'
+      forceHigh || tier === 'max'
+        ? state.settings.particleMode === 'high' || forceHigh
           ? 48
           : 28
         : state.settings.particleMode === 'high'
@@ -764,7 +837,7 @@
       });
     }
     const start = performance.now();
-    particleCanvas.style.opacity = tier === 'max' ? '0.95' : '0.8';
+    particleCanvas.style.opacity = tier === 'max' || forceHigh ? '0.95' : '0.8';
     function loop(now) {
       const elapsed = now - start;
       ctx.clearRect(0, 0, w, h);
@@ -790,8 +863,21 @@
   function handleBits(evt) {
     const bits = Number(evt.amount || evt.bits || evt.data?.bits || 0);
     if (!bits) return;
-    tweenProgress(Math.max(0, state.current + bits));
-    applyTierEffect(tierForBits(bits));
+    const prev = state.current;
+    const next = Math.max(0, state.current + bits);
+    const crossingGoal = prev < state.goal && next >= state.goal && !state.hasCompleted;
+    if (crossingGoal) state.hasCompleted = true;
+    tweenProgress(next);
+    const tier = tierForBits(bits);
+    if (crossingGoal) {
+      applyTierEffect(tier, 'effect-goal-complete', true);
+      setTimeout(() => {
+        root.classList.remove('effect-goal-complete');
+      }, 1400);
+      persist();
+    } else {
+      applyTierEffect(tier);
+    }
   }
 
   function isAuthorized(event) {
@@ -829,15 +915,37 @@
         break;
       case 'reset':
         setCurrent(0);
+        state.hasCompleted = false;
         break;
       case 'setgoal':
-        if (val) setGoal(Number(val));
+        if (val) {
+          setGoal(Number(val));
+          state.hasCompleted = state.current >= state.goal;
+          persist();
+        }
         break;
       case 'setcurrent':
-        if (val) setCurrent(Number(val));
+        if (val) {
+          setCurrent(Number(val));
+          state.hasCompleted = state.current >= state.goal;
+          persist();
+        }
         break;
       case 'add':
-        if (val) tweenProgress(Math.max(0, state.current + Number(val)));
+        if (val) {
+          const prevVal = state.current;
+          const added = Math.max(0, state.current + Number(val));
+          const crossing = prevVal < state.goal && added >= state.goal && !state.hasCompleted;
+          if (crossing) state.hasCompleted = true;
+          tweenProgress(added);
+          if (crossing) {
+            applyTierEffect(tierForBits(Number(val)), 'effect-goal-complete', true);
+            setTimeout(() => {
+              root.classList.remove('effect-goal-complete');
+            }, 1400);
+            persist();
+          }
+        }
         break;
       default:
         if (state.visible) hideBar();
@@ -868,6 +976,7 @@
     state.current = Number(field.currentBitsInitial ?? defaultSettings.currentBitsInitial);
     applySettings();
     restore();
+    state.hasCompleted = state.hasCompleted || state.current >= state.goal;
     updateNumbers();
     if (state.settings.autoCycleEnabled) startAutoCycle();
     state.ready = true;
