@@ -30,17 +30,19 @@
     <div class="bbits-epic-speedlines"></div>
     <div class="bbits-epic-glow"></div>
     <div class="bbits-epic-ribbon">
-      <div class="bbits-epic-border"></div>
-      <div class="bbits-epic-panel"></div>
-      <div class="bbits-epic-badge">
-        <div class="bbits-epic-badge-core"></div>
+      <div class="bbits-epic-ribbon-side bbits-epic-ribbon-side--left"></div>
+      <div class="bbits-epic-ribbon-side bbits-epic-ribbon-side--right"></div>
+      <div class="bbits-epic-ribbon-core">
+        <div class="bbits-epic-badge">
+          <div class="bbits-epic-badge-core"></div>
+        </div>
+        <div class="bbits-epic-text">
+          <div class="bbits-epic-headline"></div>
+          <div class="bbits-epic-subline"></div>
+        </div>
+        <div class="bbits-epic-sheen"></div>
+        <div class="bbits-epic-grain"></div>
       </div>
-      <div class="bbits-epic-text">
-        <div class="bbits-epic-headline"></div>
-        <div class="bbits-epic-subline"></div>
-      </div>
-      <div class="bbits-epic-sheen"></div>
-      <div class="bbits-epic-grain"></div>
     </div>
   </div>
 </div>
@@ -62,6 +64,7 @@
   --mega-scale: 1;
   --mega-glow: 0.35;
   --mega-y: 22%;
+  --epic-font: 'Bebas Neue', 'Rajdhani', 'Inter', system-ui, sans-serif;
 }
 
 #bbits-root {
@@ -431,21 +434,23 @@
   box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.28), 0 0 26px rgba(220, 20, 60, 0.42);
 #bbits-epic {
   --epic-red: #dc143c;
-  --epic-red2: #a1122a;
-  --epic-ink: rgba(5, 5, 7, 0.82);
-  --epic-smoke: rgba(18, 10, 14, 0.72);
-  --epic-white: #f6f3f3;
+  --epic-red2: #94122c;
+  --epic-ink: rgba(6, 6, 8, 0.86);
+  --epic-smoke: rgba(22, 12, 16, 0.78);
+  --epic-white: #f7f3f3;
   --epic-intensity: 0.8;
-  --epic-angle: 38px;
-  --epic-h: 170px;
+  --epic-angle: 46px;
+  --epic-h: 190px;
+  --epic-font: 'Bebas Neue', 'Rajdhani', 'Inter', system-ui, sans-serif;
   position: fixed;
   left: 50%;
   top: var(--mega-y, 22%);
   transform: translate(-50%, -50%);
-  width: clamp(820px, 72vw, 1280px);
+  width: clamp(880px, 74vw, 1280px);
   pointer-events: none;
   z-index: 99999;
   opacity: 0;
+  transition: opacity 180ms ease;
 }
 
 #bbits-epic.is-on {
@@ -454,39 +459,56 @@
 
 #bbits-epic .bbits-epic-stage {
   position: relative;
-  filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.6));
 }
 
-#bbits-epic .bbits-epic-speedlines {
-  position: absolute;
-  inset: -60px;
-  background: repeating-linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.05) 24px,
-    transparent 24px,
-    transparent 48px
-  );
-  opacity: 0;
-  transform: translateX(0);
+#bbits-epic.play-in .bbits-epic-stage {
+  animation: bbits-epic-in 720ms cubic-bezier(0.16, 0.9, 0.24, 1);
 }
 
-#bbits-epic.epic-anim-on .bbits-epic-speedlines {
-  animation: bbits-epic-lines 550ms ease-out;
+#bbits-epic.play-out .bbits-epic-stage {
+  animation: bbits-epic-out 520ms ease forwards;
 }
 
 #bbits-epic .bbits-epic-glow {
   position: absolute;
-  inset: -48px;
+  inset: -78px;
   background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.26), transparent 60%);
-  filter: blur(14px);
-  opacity: calc(0.4 + var(--epic-intensity, 0.8) * 0.4);
+  filter: blur(18px);
+  opacity: calc(0.42 + var(--epic-intensity, 0.8) * 0.4);
+  mix-blend-mode: screen;
+}
+
+#bbits-epic .bbits-epic-speedlines {
+  position: absolute;
+  inset: -120px;
+  background: repeating-linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.06) 26px,
+    transparent 26px,
+    transparent 54px
+  );
+  opacity: 0;
+  transform: translateX(-8px);
+  mix-blend-mode: screen;
+}
+
+#bbits-epic.epic-anim-on .bbits-epic-speedlines {
+  animation: bbits-epic-lines 680ms ease-out;
 }
 
 #bbits-epic .bbits-epic-ribbon {
   position: relative;
-  height: var(--epic-h, 170px);
-  padding: 24px 64px 24px 120px;
+  height: var(--epic-h, 190px);
+  transform: scale(var(--mega-scale, 1));
+}
+
+#bbits-epic .bbits-epic-ribbon-core {
+  position: relative;
+  height: 100%;
+  padding: 26px 82px 26px 152px;
+  background: linear-gradient(132deg, rgba(14, 7, 10, 0.95), rgba(32, 18, 22, 0.9));
   clip-path: polygon(
     var(--epic-angle) 0%,
     calc(100% - var(--epic-angle)) 0%,
@@ -495,65 +517,76 @@
     var(--epic-angle) 100%,
     0% 50%
   );
-  transform: scale(var(--mega-scale, 1));
-  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 28px rgba(220, 20, 60, 0.16),
+    0 6px 22px rgba(0, 0, 0, 0.5), 0 0 22px rgba(220, 20, 60, 0.2);
+  overflow: hidden;
 }
 
-#bbits-epic .bbits-epic-border {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(140deg, rgba(220, 20, 60, 0.78), rgba(161, 18, 42, 0.78));
-  clip-path: inherit;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55));
-  opacity: 0.95;
-}
-
-#bbits-epic .bbits-epic-panel {
-  position: absolute;
-  inset: 8px;
-  background: linear-gradient(125deg, var(--epic-ink), var(--epic-smoke));
-  clip-path: polygon(
-    calc(var(--epic-angle) - 8px) 0%,
-    calc(100% - (var(--epic-angle) - 8px)) 0%,
-    100% 50%,
-    calc(100% - (var(--epic-angle) - 8px)) 100%,
-    calc(var(--epic-angle) - 8px) 100%,
-    0% 50%
-  );
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 0 24px rgba(220, 20, 60, 0.2);
-}
-
-#bbits-epic .bbits-epic-panel::before {
+#bbits-epic .bbits-epic-ribbon-core::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 60%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 60%);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+#bbits-epic .bbits-epic-ribbon-core::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.1), transparent 45%);
+  opacity: 0.65;
+  mix-blend-mode: screen;
+}
+
+#bbits-epic .bbits-epic-ribbon-side {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  width: 200px;
+  background: linear-gradient(140deg, rgba(220, 20, 60, 0.82), rgba(132, 14, 34, 0.82));
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55));
+  opacity: calc(0.9 + var(--epic-intensity, 0.8) * 0.1);
+}
+
+#bbits-epic .bbits-epic-ribbon-side::after {
+  content: '';
+  position: absolute;
+  inset: 10px 12px;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.12), transparent 50%);
   mix-blend-mode: screen;
   opacity: 0.6;
 }
 
-#bbits-epic .bbits-epic-panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(255, 198, 84, 0.18), transparent 50%);
-  mix-blend-mode: screen;
-  opacity: 0.4;
+#bbits-epic .bbits-epic-ribbon-side--left {
+  left: -150px;
+  clip-path: polygon(100% 0, 85% 50%, 100% 100%, 0 100%, 12% 50%, 0 0);
+  transform: skewX(-10deg);
+}
+
+#bbits-epic .bbits-epic-ribbon-side--right {
+  right: -150px;
+  clip-path: polygon(0 0, 100% 0, 88% 50%, 100% 100%, 0 100%, 12% 50%);
+  transform: skewX(10deg);
 }
 
 #bbits-epic .bbits-epic-badge {
   position: absolute;
-  left: -12px;
+  left: 10px;
   top: 50%;
-  transform: translateY(-50%);
-  width: 92px;
-  height: 92px;
+  transform: translate(-10%, -50%);
+  width: 118px;
+  height: 118px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 65%), linear-gradient(135deg, rgba(220, 20, 60, 0.35), rgba(161, 18, 42, 0.6));
-  box-shadow: 0 0 12px rgba(220, 20, 60, 0.45), inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.16), transparent 55%),
+    linear-gradient(135deg, rgba(220, 20, 60, 0.38), rgba(132, 14, 34, 0.6));
+  box-shadow: 0 0 16px rgba(220, 20, 60, 0.4), inset 0 0 0 2px rgba(255, 255, 255, 0.1);
   overflow: hidden;
   display: grid;
   place-items: center;
+  isolation: isolate;
 }
 
 #bbits-epic .bbits-epic-badge.has-image {
@@ -567,11 +600,11 @@
 
 #bbits-epic .bbits-epic-badge-core {
   position: relative;
-  width: 78px;
-  height: 78px;
+  width: 94px;
+  height: 94px;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.12), rgba(220, 20, 60, 0.35));
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.12), inset 0 0 12px rgba(220, 20, 60, 0.4);
+  background: radial-gradient(circle at 55% 40%, rgba(255, 255, 255, 0.18), rgba(220, 20, 60, 0.35));
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.14), inset 0 0 16px rgba(220, 20, 60, 0.42);
 }
 
 #bbits-epic .bbits-epic-badge.badge-off .bbits-epic-badge-core {
@@ -581,13 +614,12 @@
 #bbits-epic .bbits-epic-badge:not(.has-image)::after {
   content: '';
   position: absolute;
-  inset: 18px;
+  inset: 20px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.14) 45%, transparent 55%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 45%, transparent 55%),
     linear-gradient(145deg, rgba(220, 20, 60, 0.6) 30%, transparent 50%),
     linear-gradient(155deg, rgba(255, 255, 255, 0.14) 20%, transparent 40%);
-  mask:
-    linear-gradient(90deg, #000, #000);
+  mask: linear-gradient(90deg, #000, #000);
   mix-blend-mode: screen;
   opacity: 0.9;
 }
@@ -597,18 +629,21 @@
   z-index: 2;
   text-align: center;
   color: var(--epic-white);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
 }
 
 #bbits-epic .bbits-epic-headline {
+  position: relative;
+  font-family: var(--epic-font);
   font-weight: 800;
-  font-size: clamp(54px, 6vw, 98px);
-  letter-spacing: 0.06em;
+  font-size: clamp(56px, 6vw, 104px);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.72), 0 0 16px rgba(220, 20, 60, 0.4);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.75), 0 0 18px rgba(220, 20, 60, 0.45);
 }
 
 #bbits-epic.stroke-on .bbits-epic-headline {
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 255, 255, 0.7), 0 0 18px rgba(220, 20, 60, 0.5);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 0 12px rgba(255, 255, 255, 0.75), 0 0 20px rgba(220, 20, 60, 0.5);
 }
 
 #bbits-epic.chromatic-on .bbits-epic-headline::before,
@@ -621,21 +656,22 @@
 }
 
 #bbits-epic.chromatic-on .bbits-epic-headline::before {
-  transform: translateX(-1px);
-  color: rgba(92, 196, 255, 0.5);
+  transform: translateX(-1.4px);
+  color: rgba(92, 196, 255, 0.55);
 }
 
 #bbits-epic.chromatic-on .bbits-epic-headline::after {
-  transform: translateX(1px);
-  color: rgba(255, 120, 182, 0.5);
+  transform: translateX(1.4px);
+  color: rgba(255, 120, 182, 0.55);
 }
 
 #bbits-epic .bbits-epic-subline {
-  margin-top: 6px;
+  margin-top: 10px;
+  font-family: var(--epic-font);
   font-weight: 700;
-  font-size: clamp(18px, 2.2vw, 32px);
-  letter-spacing: 0.08em;
-  opacity: 0.92;
+  font-size: clamp(18px, 2.3vw, 32px);
+  letter-spacing: 0.09em;
+  opacity: 0.95;
   color: #f0eeee;
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.55), 0 0 12px rgba(220, 20, 60, 0.28);
   font-variant-numeric: tabular-nums;
@@ -646,21 +682,21 @@
 
 #bbits-epic .bbits-epic-sheen {
   position: absolute;
-  inset: -14px;
-  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.22) 50%, transparent 65%);
+  inset: -22px;
+  background: linear-gradient(120deg, transparent 36%, rgba(255, 255, 255, 0.24) 50%, transparent 64%);
   mix-blend-mode: screen;
   opacity: 0;
 }
 
 #bbits-epic.epic-anim-on .bbits-epic-sheen {
-  animation: bbits-epic-shine 700ms ease;
+  animation: bbits-epic-shine 820ms ease;
 }
 
 #bbits-epic .bbits-epic-grain {
   position: absolute;
-  inset: 0;
+  inset: -2px;
   background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
-  opacity: 0.35;
+  opacity: 0.32;
   mix-blend-mode: screen;
   pointer-events: none;
 }
@@ -873,17 +909,17 @@
 @keyframes bbits-epic-in {
   0% {
     opacity: 0;
-    filter: blur(4px);
-    transform: scale(0.98);
+    filter: blur(6px);
+    transform: translateY(-8px) scale(0.98);
   }
-  50% {
+  55% {
     opacity: 1;
-    transform: scale(1.03);
-    filter: blur(1px);
+    transform: translateY(4px) scale(1.02);
+    filter: blur(1.4px);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
@@ -891,36 +927,36 @@
 @keyframes bbits-epic-out {
   0% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: scale(1.02);
+    transform: translateY(6px) scale(1.02);
   }
 }
 
 @keyframes bbits-epic-shine {
   0% {
     opacity: 0;
-    transform: translateX(-35%);
+    transform: translateX(-42%);
   }
   40% {
-    opacity: 0.65;
+    opacity: 0.72;
   }
   100% {
     opacity: 0;
-    transform: translateX(35%);
+    transform: translateX(42%);
   }
 }
 
 @keyframes bbits-epic-lines {
   0% {
-    opacity: 0.38;
-    transform: translateX(-12px);
+    opacity: 0.5;
+    transform: translateX(-22px);
   }
   100% {
     opacity: 0;
-    transform: translateX(12px);
+    transform: translateX(32px);
   }
 }
 
@@ -974,16 +1010,26 @@
     max-width: 200px;
   }
 
-  .bbits-epic {
+  #bbits-epic {
     --mega-y: 18%;
+    width: min(96vw, 720px);
   }
 
-  .bbits-epic-headline {
-    font-size: clamp(40px, 11vw, 48px);
+  #bbits-epic .bbits-epic-ribbon-core {
+    padding: 20px 56px 20px 126px;
   }
 
-  .bbits-epic-subline {
-    font-size: clamp(18px, 7vw, 22px);
+  #bbits-epic .bbits-epic-badge {
+    width: 96px;
+    height: 96px;
+  }
+
+  #bbits-epic .bbits-epic-headline {
+    font-size: clamp(40px, 11vw, 52px);
+  }
+
+  #bbits-epic .bbits-epic-subline {
+    font-size: clamp(18px, 7vw, 24px);
   }
 }
 ```
@@ -1065,8 +1111,8 @@
     epicBadgeImageUrl: '',
     epicFontMode: 'external',
     epicIntensity: 0.8,
-    epicRibbonAngle: 38,
-    epicRibbonHeight: 170,
+    epicRibbonAngle: 46,
+    epicRibbonHeight: 190,
     epicHeadlineStroke: true,
     epicChromatic: true,
     colors: {
@@ -1149,6 +1195,12 @@
       epicRoot.style.setProperty('--epic-intensity', s.epicIntensity ?? defaultSettings.epicIntensity);
       epicRoot.style.setProperty('--epic-angle', `${s.epicRibbonAngle ?? defaultSettings.epicRibbonAngle}px`);
       epicRoot.style.setProperty('--epic-h', `${s.epicRibbonHeight ?? defaultSettings.epicRibbonHeight}px`);
+      const epicFontStack =
+        s.epicFontMode === 'external'
+          ? "'Bebas Neue','Rajdhani','Inter',system-ui,sans-serif"
+          : "'Rajdhani','Inter',system-ui,sans-serif";
+      epicRoot.style.setProperty('--epic-font', epicFontStack);
+      epicRoot.dataset.style = s.epicStyle || 'victoryRibbon';
     }
     if (s.epicFontMode === 'external') {
       const linkId = 'bbits-epic-font-link';
@@ -1159,9 +1211,6 @@
         link.href = 'https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&family=Rajdhani:wght@600;700&family=Inter:wght@600;700&display=swap';
         document.head.appendChild(link);
       }
-    }
-    if (epicRoot) {
-      epicRoot.style.setProperty('--mega-y', `${s.megaDonorYPercent || defaultSettings.megaDonorYPercent}%`);
     }
     root.style.left = root.style.right = root.style.top = root.style.bottom = 'auto';
     const offset = `${s.position?.includes('bottom') ? s.offsetY || 3 : s.offsetY || 3}%`;
@@ -1400,6 +1449,7 @@
   function showMegaDonor(bits, donor) {
     if (!epicRoot || !state.settings.epicEnabled) return;
     if (bits < state.settings.epicThresholdBits) return;
+    const s = state.settings;
     const safeName = sanitizeName(donor);
     const headline = state.settings.epicHeadline || defaultSettings.epicHeadline;
     const sub = (state.settings.epicSubTemplate || defaultSettings.epicSubTemplate)
@@ -1412,14 +1462,18 @@
     if (epicSubEl) epicSubEl.textContent = sub;
 
     const intensity = clamp(Math.log10(bits / state.settings.epicThresholdBits), 0, 1);
-    const scale =
-      1 +
-      intensity *
-        ((state.settings.megaDonorMaxScale || defaultSettings.megaDonorMaxScale) - 1);
+    const scale = 1 + intensity * ((s.megaDonorMaxScale || defaultSettings.megaDonorMaxScale) - 1);
     epicRoot.style.setProperty('--mega-scale', scale.toFixed(3));
-    epicRoot.style.setProperty('--epic-intensity', state.settings.epicIntensity ?? defaultSettings.epicIntensity);
-    epicRoot.style.setProperty('--epic-angle', `${state.settings.epicRibbonAngle ?? defaultSettings.epicRibbonAngle}px`);
-    epicRoot.style.setProperty('--epic-h', `${state.settings.epicRibbonHeight ?? defaultSettings.epicRibbonHeight}px`);
+    const baseIntensity = clamp(s.epicIntensity ?? defaultSettings.epicIntensity, 0, 1.3);
+    const burstIntensity = clamp(baseIntensity + intensity * 0.35, 0, 1.45);
+    epicRoot.style.setProperty('--epic-intensity', burstIntensity);
+    epicRoot.style.setProperty('--epic-angle', `${s.epicRibbonAngle ?? defaultSettings.epicRibbonAngle}px`);
+    epicRoot.style.setProperty('--epic-h', `${s.epicRibbonHeight ?? defaultSettings.epicRibbonHeight}px`);
+    const epicFontStack =
+      s.epicFontMode === 'external'
+        ? "'Bebas Neue','Rajdhani','Inter',system-ui,sans-serif"
+        : "'Rajdhani','Inter',system-ui,sans-serif";
+    epicRoot.style.setProperty('--epic-font', epicFontStack);
 
     const badge = epicRoot.querySelector('.bbits-epic-badge');
     if (badge) {
@@ -1437,6 +1491,7 @@
 
     epicRoot.classList.toggle('chromatic-on', Boolean(state.settings.epicChromatic));
     epicRoot.classList.toggle('stroke-on', Boolean(state.settings.epicHeadlineStroke));
+    epicRoot.dataset.style = state.settings.epicStyle || 'victoryRibbon';
 
     epicRoot.classList.remove('is-on', 'play-in', 'play-out', 'epic-anim-on');
     void epicRoot.offsetWidth;
