@@ -1,0 +1,78 @@
+/*
+ * Win Streak widget – Neon fixes
+ * Drop this stylesheet after the base widget styles to tone down the glow
+ * and avoid the "washed out" neon look shown in the screenshot.
+ */
+
+:root {
+  /* Softer baseline for the glow */
+  --neon-core: #fff7f7;
+  --neon-tube: #ff7b88;
+  --neon-primary: #e53959;
+  --neon-mid: #b02038;
+  --neon-dark: #4d0c1c;
+  --neon-glow-radius: 28px;
+  --neon-bloom-strength: 1;
+}
+
+/* Card glow: less bloom, more definition */
+.ws-card {
+  box-shadow:
+    0 0 0 1px rgba(229, 57, 89, 0.28),
+    0 10px 26px rgba(0, 0, 0, 0.5),
+    inset 0 0 28px rgba(229, 57, 89, 0.12),
+    0 0 48px rgba(229, 57, 89, 0.2) !important;
+}
+
+/* Text glow: fewer layers to prevent the overblown halo */
+.ws-title,
+.ws-label,
+.ws-counter,
+.ws-stat-value,
+.ws-level-number,
+#ws-level-title {
+  text-shadow:
+    0 0 2px var(--neon-core),
+    0 0 6px var(--neon-tube),
+    0 0 12px var(--neon-primary),
+    0 0 18px var(--neon-mid);
+  filter: none;
+}
+
+/* Secondary text keeps contrast without fogging the card */
+.ws-stat-label,
+.ws-level-label,
+.ws-xp-text,
+.ws-perfect-label {
+  text-shadow:
+    0 0 2px var(--neon-core),
+    0 0 8px var(--neon-tube),
+    0 0 12px var(--neon-primary);
+}
+
+/* Remove aggressive flicker/pulse animations that amplify the halo */
+.ws-title,
+.ws-counter,
+.ws-label,
+.ws-stat-value {
+  animation: none !important;
+}
+
+.ws-counter:hover {
+  animation: none !important;
+  filter: brightness(1.08);
+}
+
+/* Make the XP bar glow consistent with the toned-down palette */
+.ws-xp-fill {
+  box-shadow:
+    0 0 10px rgba(229, 57, 89, 0.8),
+    inset 0 0 8px rgba(255, 125, 136, 0.75);
+}
+
+/* Optional: ease the background gradients so the red halo doesn't stack */
+.ws-header,
+.ws-footer,
+.ws-level-system {
+  background: linear-gradient(180deg, rgba(229, 57, 89, 0.08), rgba(229, 57, 89, 0));
+}
